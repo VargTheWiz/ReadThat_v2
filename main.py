@@ -80,6 +80,7 @@ class Worker (QObject):
                 return in_data, pyaudio.paContinue
 
             # build the model and recognizer objects.
+            self.rectext.emit("code1234")
             self.rectext.emit("Пожалуйста, подождите, модель загружается")
             print("===> Build the model and recognizer objects.  This will take a few minutes.")
             # model = Model(r"D:/Programmeas/makesubtitles/vosk-model-ru-0.42")
@@ -89,6 +90,7 @@ class Worker (QObject):
             recognizer.SetWords(False)
 
             print("===> Begin recording. Press Ctrl+C to stop the recording ")
+            self.rectext.emit("code1234")
             print(default_speakers)
 
             try:
@@ -232,6 +234,8 @@ class MainWindow(QMainWindow):
 
         # self.button = QPushButton("Press Me!")
 
+        self.defaultWindowFlags = self.windowFlags()
+
     # функция запуска распознавания
     def runLongTask(self, checked):
         self.stapau_button_is_checked = checked
@@ -285,12 +289,32 @@ class MainWindow(QMainWindow):
             self.fileName = fileName
 
     def TheHideButton(self, checked):
+        if checked:
+            self.HideBtn.setIcon(QIcon("src/TheUnhideButton.png"))
+            self.setWindowFlag(Qt.WindowType.FramelessWindowHint)  # убираем рамку
+            self.TextFieldSizeBtn.setVisible(False)
+            self.ExitBtn.setVisible(False)
+            self.OptionsBtn.setVisible(False)
+            self.StaPauBtn.setVisible(False)
+            self.SaveTxtBtn.setVisible(False)
+            window.show()
+        else:
+            self.HideBtn.setIcon(QIcon("src/TheHideButton.png"))
+            self.setWindowFlags(self.defaultWindowFlags)
+            self.TextFieldSizeBtn.setVisible(True)
+            self.ExitBtn.setVisible(True)
+            self.OptionsBtn.setVisible(True)
+            self.StaPauBtn.setVisible(True)
+            self.SaveTxtBtn.setVisible(True)
+            window.show()
         print("asd")
     # тут большое условие, меняет картинку, скрывает виджеты, показывает картинку
 
     @pyqtSlot(str)
     def AcceptRecText(self, string):
         self.TheTextField.appendPlainText(string)
+        if string == "code1234":
+            self.TheTextField.setPlainText("") #очищает поле текста
 
 
 
