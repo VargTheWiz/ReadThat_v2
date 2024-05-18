@@ -20,7 +20,7 @@ import queue
 import sys
 import wave
 import os
-#from settings import CustomDialog, LoadSettingsFromIni, SaveSettingToIni
+from settings import CustomDialog, LoadSettingsFromIni, SaveSettingToIni
 
 
 # Step 1: Create a worker class
@@ -278,11 +278,13 @@ class MainWindow(QMainWindow):
         self.close()
 
     def TheOptions(self):
-        print("asd")
+        print("setti")
+        dlg = CustomDialog()
+        dlg.exec()
         # открывает окно настроек
 
     def saveAs(self):
-        fileName, _ = QFileDialog.getSaveFileName(self, "Save File", "", "All Files(*);;Text Files(*.txt)")
+        fileName, _ = QFileDialog.getSaveFileName(self, "Save File", self.fileName, "All Files(*);;Text Files(*.txt)")
         if fileName:
             with open(fileName, 'w') as f:
                 f.write(self.TheTextField.toPlainText())
