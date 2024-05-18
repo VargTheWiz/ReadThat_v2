@@ -307,7 +307,6 @@ class MainWindow(QMainWindow):
             self.StaPauBtn.setVisible(True)
             self.SaveTxtBtn.setVisible(True)
             window.show()
-        print("asd")
     # тут большое условие, меняет картинку, скрывает виджеты, показывает картинку
 
     @pyqtSlot(str)
