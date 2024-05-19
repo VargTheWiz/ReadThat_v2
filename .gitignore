@@ -231,3 +231,5 @@ fabric.properties
 
 # Loopback audiofile
 loopback_record.wav
+models/
+config.ini
