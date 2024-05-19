@@ -1,3 +1,5 @@
+from PyQt6.QtCore import QUrl
+from PyQt6.QtGui import QDesktopServices
 from PyQt6.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QRadioButton, QLabel, QGroupBox, QPushButton
 
 
@@ -5,7 +7,7 @@ def LoadSettingsFromIni(self):
     print("ваыпр")
 
 
-def SaveSettingToIni(self):
+def SaveSettingToIni(parameter, what):
     print("srgn")
 
 
@@ -15,7 +17,10 @@ class CustomDialog(QDialog):
 
         self.setWindowTitle("ReadThat - Settings")
 
-        QBtn = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        QBtn = QDialogButtonBox.StandardButton.Close  # QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        # Thebut = QDialogButtonBox("asdfasdf")
+        # QBtn = QDialogButtonBox()
+        # QBtn.addButton("asdfsd", QDialogButtonBox.StandardButton.Close)
 
         group_box = QGroupBox("Основные настройки")
 
@@ -46,6 +51,8 @@ class CustomDialog(QDialog):
         print("choose")
 
     def TheCheckUpdates(self):
+        url = QUrl("https://alphacephei.com/vosk/models")
+        QDesktopServices.openUrl(url)
         print("check")
 
     def TheDeleteModel(self):

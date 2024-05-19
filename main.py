@@ -158,7 +158,7 @@ class MainWindow(QMainWindow):
         # раскладка форм в приложении
         layout = QHBoxLayout()  # горизонтальная: вывод + все л2 + скрытие
         layout2 = QVBoxLayout()  # вертикальная: опции + старт + сейв и все что в л3
-        layout3 = QHBoxLayout() # горизонтальная: размер поля + выход
+        layout3 = QVBoxLayout() # горизонтальная: размер поля + выход | скрытие + выход
         # итого надо скрыть: (размер поля + выход) опции + старт + сейв
         # виджет вывода текста
         self.TheTextField = QPlainTextEdit()
@@ -169,23 +169,14 @@ class MainWindow(QMainWindow):
 
         # раскладка форм в приложении
         layout.addLayout(layout2)
-        layout2.addLayout(layout3)
+
 
         # виджет-кнопка раскрытия окна вывода текста (сомнительно, пропускаем пока что)
-        self.TextFieldSizeBtn = QToolButton()
+        # self.TextFieldSizeBtn = QToolButton()
         # self. TextFieldSizeBtn.setMinimumWidth(20)
         # self.TextFieldSizeBtn.setMinimumHeight(20)
         # self. TextFieldSizeBtn.setSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.MinimumExpanding)
-        layout3.addWidget(self.TextFieldSizeBtn)
-
-        # виджет-тулкнопка закрытия
-        self.ExitBtn = QToolButton()
-        self.ExitBtn.clicked.connect(self.TheExitButton)
-        self.ExitBtn.setIcon(QIcon("src/TheCloseButton.png"))
-        # self.ExitBtn.setMaximumWidth(20)
-        # self.ExitBtn.setMinimumWidth(5)
-        # #self.ExitBtn.setMinimumHeight(5)
-        layout3.addWidget(self.ExitBtn)
+        # layout3.addWidget(self.TextFieldSizeBtn)
 
         # кнопка открытия окна настроек
         self.OptionsBtn = QToolButton()
@@ -216,7 +207,19 @@ class MainWindow(QMainWindow):
         self.SaveTxtBtn.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         layout2.addWidget(self.SaveTxtBtn)
 
-        # кнопка скрытия лишних кнопочек (layout2)
+        layout.addLayout(layout3)
+
+        # виджет-тулкнопка закрытия
+        self.ExitBtn = QToolButton()
+        self.ExitBtn.clicked.connect(self.TheExitButton)
+        self.ExitBtn.setIcon(QIcon("src/TheCloseButton.png"))
+        self.ExitBtn.setMaximumWidth(30)
+        # self.ExitBtn.setMinimumWidth(5)
+        # #self.ExitBtn.setMinimumHeight(5)
+        # layout3.addWidget(self.ExitBtn)
+        layout3.addWidget(self.ExitBtn)
+
+        # кнопка скрытия лишних кнопочек (layout3)
         self.HideBtn = QToolButton()
         self.HideBtn.setCheckable(True)
         self.hide_button_is_checked = 0
@@ -225,7 +228,7 @@ class MainWindow(QMainWindow):
         # self.HideBtn.setMinimumHeight(200)
         self.HideBtn.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.HideBtn.clicked.connect(self.TheHideButton)
-        layout.addWidget(self.HideBtn)
+        layout3.addWidget(self.HideBtn)
 
         # главный виджет со всем внутри
         widget = QWidget()
@@ -293,9 +296,9 @@ class MainWindow(QMainWindow):
     def TheHideButton(self, checked):
         if checked:
             self.HideBtn.setIcon(QIcon("src/TheUnhideButton.png"))
-            self.setWindowFlag(Qt.WindowType.FramelessWindowHint)  # убираем рамку
-            self.TextFieldSizeBtn.setVisible(False)
-            self.ExitBtn.setVisible(False)
+            self.setWindowFlag(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
+            # self.TextFieldSizeBtn.setVisible(False)
+            # self.ExitBtn.setVisible(False)
             self.OptionsBtn.setVisible(False)
             self.StaPauBtn.setVisible(False)
             self.SaveTxtBtn.setVisible(False)
@@ -303,8 +306,8 @@ class MainWindow(QMainWindow):
         else:
             self.HideBtn.setIcon(QIcon("src/TheHideButton.png"))
             self.setWindowFlags(self.defaultWindowFlags)
-            self.TextFieldSizeBtn.setVisible(True)
-            self.ExitBtn.setVisible(True)
+            # self.TextFieldSizeBtn.setVisible(True)
+            # self.ExitBtn.setVisible(True)
             self.OptionsBtn.setVisible(True)
             self.StaPauBtn.setVisible(True)
             self.SaveTxtBtn.setVisible(True)
