@@ -85,7 +85,9 @@ class Worker (QObject):
             print("===> Build the model and recognizer objects.  This will take a few minutes.")
             # model = Model(r"D:/Programmeas/makesubtitles/vosk-model-ru-0.42")
             model = Model(r"D:/Programmeas/makesubtitles/vosk-model-small-ru-0.22")
-            # model = Model(LoadSettingFromIni('model'))
+            if LoadSettingsFromIni('model'):
+                print(LoadSettingsFromIni('model'))
+                model = Model(LoadSettingsFromIni('model'))
             recognizer = KaldiRecognizer(model, int(default_speakers["defaultSampleRate"]))
             recognizer.SetWords(False)
 
@@ -125,7 +127,7 @@ class Worker (QObject):
                 # write text portion of results to a file
                 with open(outfileText, 'w') as output:
                     print(json.dumps(textResults, indent=4, ensure_ascii=False), file=output)
-                print('===> Finished Recording')  # эмит
+                print('===> Finished Recording')
             except Exception as e:
                 # write text portion of results to a file
                 with open(outfileText, 'w') as output:
@@ -135,17 +137,13 @@ class Worker (QObject):
             wave_file.close()
 
 
-
-
 # Подкласс QMainWindow для настройки главного окна приложения
 class MainWindow(QMainWindow):
 
     def __init__(self):
+        self.settings = QSettings("config.ini", QSettings.Format.IniFormat)
         super(MainWindow, self).__init__()
 
-        now = datetime.now()
-        dt_string = now.strftime("%Y-%d-%m--%H-%M-%S")
-        self.fileName = dt_string
         self.worker = None
         self.thread = None
 
@@ -158,7 +156,7 @@ class MainWindow(QMainWindow):
         # раскладка форм в приложении
         layout = QHBoxLayout()  # горизонтальная: вывод + все л2 + скрытие
         layout2 = QVBoxLayout()  # вертикальная: опции + старт + сейв и все что в л3
-        layout3 = QVBoxLayout() # горизонтальная: размер поля + выход | скрытие + выход
+        layout3 = QVBoxLayout()  # горизонтальная: размер поля + выход | скрытие + выход
         # итого надо скрыть: (размер поля + выход) опции + старт + сейв
         # виджет вывода текста
         self.TheTextField = QPlainTextEdit()
@@ -169,7 +167,6 @@ class MainWindow(QMainWindow):
 
         # раскладка форм в приложении
         layout.addLayout(layout2)
-
 
         # виджет-кнопка раскрытия окна вывода текста (сомнительно, пропускаем пока что)
         # self.TextFieldSizeBtn = QToolButton()
@@ -243,8 +240,8 @@ class MainWindow(QMainWindow):
     def runLongTask(self, checked):
         self.stapau_button_is_checked = checked
         if self.stapau_button_is_checked:
-            self.TheTextField.setPlainText("") # затрем поле вывода
-            self.StaPauBtn.setIcon(QIcon("src/TheStopButton.png")) # 2 - иконка стоп
+            self.TheTextField.setPlainText("")  # затрем поле вывода
+            self.StaPauBtn.setIcon(QIcon("src/TheStopButton.png"))  # 2 - иконка стоп
 
             # Step 2: Create a QThread object
             self.thread = QThread()
@@ -287,11 +284,12 @@ class MainWindow(QMainWindow):
         # открывает окно настроек
 
     def saveAs(self):
-        fileName, _ = QFileDialog.getSaveFileName(self, "Save File", self.fileName, "All Files(*);;Text Files(*.txt)")
+        now = datetime.now()
+        fileName, _ = QFileDialog.getSaveFileName(self, "Save File", now.strftime("%Y-%d-%m--%H-%M-%S"), "All Files(*);;Text Files(*.txt)")
         if fileName:
             with open(fileName, 'w') as f:
                 f.write(self.TheTextField.toPlainText())
-            self.fileName = fileName
+            # self.fileName = fileName
 
     def TheHideButton(self, checked):
         if checked:
@@ -318,10 +316,7 @@ class MainWindow(QMainWindow):
     def AcceptRecText(self, string):
         self.TheTextField.appendPlainText(string)
         if string == "code1234":
-            self.TheTextField.setPlainText("") #очищает поле текста
-
-
-
+            self.TheTextField.setPlainText("")  # очищает поле текста
 
 
 app = QApplication([])
@@ -330,4 +325,3 @@ window = MainWindow()
 window.show()
 
 app.exec()
-

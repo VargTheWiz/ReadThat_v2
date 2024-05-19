@@ -1,13 +1,18 @@
-from PyQt6.QtCore import QUrl
+from PyQt6.QtCore import QUrl, QSettings
 from PyQt6.QtGui import QDesktopServices
-from PyQt6.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QRadioButton, QLabel, QGroupBox, QPushButton
+from PyQt6.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QRadioButton, QLabel, QGroupBox, QPushButton, \
+    QFileDialog
 
 
-def LoadSettingsFromIni(self):
+def LoadSettingsFromIni(value):
     print("ваыпр")
+    settings = QSettings("config.ini", QSettings.Format.IniFormat)
+    return settings.value(value, defaultValue=None, type=str)
 
 
 def SaveSettingToIni(parameter, what):
+    settings = QSettings("config.ini", QSettings.Format.IniFormat)
+    settings.setValue(parameter, what)
     print("srgn")
 
 
@@ -48,7 +53,9 @@ class CustomDialog(QDialog):
         self.setLayout(layout)
 
     def TheChooseModel(self):
-        print("choose")
+        folderpath = QFileDialog.getExistingDirectory(self, 'Select Folder')
+        print(folderpath)
+        SaveSettingToIni('chosen-model', folderpath)
 
     def TheCheckUpdates(self):
         url = QUrl("https://alphacephei.com/vosk/models")
