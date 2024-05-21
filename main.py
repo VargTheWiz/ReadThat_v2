@@ -62,17 +62,20 @@ class Worker (QObject):
                 else:
                     exit()
 
-            wave_file = wave.open(filename, 'wb')
-            wave_file.setnchannels(default_speakers["maxInputChannels"])
-            wave_file.setsampwidth(pyaudio.get_sample_size(pyaudio.paInt16))
-            wave_file.setframerate(int(default_speakers["defaultSampleRate"]))
+            isrecordon = LoadSettingsFromIni('makerecord')
+            if isrecordon:
+                wave_file = wave.open(filename, 'wb')
+                wave_file.setnchannels(default_speakers["maxInputChannels"])
+                wave_file.setsampwidth(pyaudio.get_sample_size(pyaudio.paInt16))
+                wave_file.setframerate(int(default_speakers["defaultSampleRate"]))
 
             # setup queue and callback function
             q = queue.Queue()
 
             def callback(in_data, frame_count, time_info, status):
                 """Write frames and return PA flag"""
-                wave_file.writeframes(in_data)
+                if isrecordon:
+                    wave_file.writeframes(in_data)
                 #
                 if status:
                     print(status, file=sys.stderr)
@@ -133,8 +136,8 @@ class Worker (QObject):
                 with open(outfileText, 'w') as output:
                     print(json.dumps(textResults, indent=4, ensure_ascii=False), file=output)
                 print(str(e))
-
-            wave_file.close()
+            if isrecordon:
+                wave_file.close()
 
 
 # Подкласс QMainWindow для настройки главного окна приложения
@@ -266,6 +269,7 @@ class MainWindow(QMainWindow):
             print("wtf")
             self.thread.requestInterruption()
             self.thread.quit()
+            # del self.thread
             self.StaPauBtn.setIcon(QIcon("src/TheStartButton.png"))  # 2 - иконка старт
 
     # Функция кнопки

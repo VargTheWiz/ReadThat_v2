@@ -27,7 +27,7 @@ class CustomDialog(QDialog):
         # QBtn = QDialogButtonBox()
         # QBtn.addButton("asdfsd", QDialogButtonBox.StandardButton.Close)
 
-        group_box = QGroupBox("Основные настройки")
+        group_box_main = QGroupBox("Основные настройки")
 
         ChooseModel = QPushButton("Выбрать модель")
         ChooseModel.clicked.connect(self.TheChooseModel)
@@ -35,20 +35,22 @@ class CustomDialog(QDialog):
         CheckUpdates.clicked.connect(self.TheCheckUpdates)
         DeleteModel = QPushButton("Удалить модель")
         DeleteModel.clicked.connect(self.TheDeleteModel)
+        RecordFlag = QRadioButton("Записывать аудио во время распознавания")
 
         settings_layout = QVBoxLayout()
         settings_layout.addWidget(ChooseModel)
         settings_layout.addWidget(CheckUpdates)
         settings_layout.addWidget(DeleteModel)
+        settings_layout.addWidget(RecordFlag)
 
-        group_box.setLayout(settings_layout)
+        group_box_main.setLayout(settings_layout)
 
         buttonBox = QDialogButtonBox(QBtn)
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
 
         layout = QVBoxLayout()
-        layout.addWidget(group_box)
+        layout.addWidget(group_box_main)
         layout.addWidget(buttonBox)
         self.setLayout(layout)
 
