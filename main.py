@@ -52,6 +52,9 @@ class Worker (QObject):
                 wasapi_info = p.get_host_api_info_by_type(pyaudio.paWASAPI)
             except OSError:
                 print("Looks like WASAPI is not available on the system. Exiting...")
+                self.rectext.emit("Looks like WASAPI is not available on the system. Exiting...")
+                QThread.currentThread().requestInterruption()
+                IsIntReq()
                 exit()
 
             default_speakers = p.get_device_info_by_index(wasapi_info["defaultOutputDevice"])
@@ -67,8 +70,10 @@ class Worker (QObject):
                         default_speakers = loopback
                         break
                 else:
+                    self.rectext.emit("Could not find loopback device with same name(and [Loopback suffix])")
+                    QThread.currentThread().requestInterruption()
+                    IsIntReq()
                     exit()
-
 
             isrecordon = LoadSettingsFromIni('makerecord')
             if isrecordon == "True":
@@ -95,7 +100,7 @@ class Worker (QObject):
                 return in_data, pyaudio.paContinue
 
             # build the model and recognizer objects.
-            self.rectext.emit("code1234")
+            self.rectext.emit("code1234")  # очистка поля текста
             self.rectext.emit("Пожалуйста, подождите, модель загружается")
             print("===> Build the model and recognizer objects.  This will take a few minutes.")
             # model = Model(r"D:/Programmeas/makesubtitles/vosk-model-ru-0.42")
@@ -107,7 +112,7 @@ class Worker (QObject):
             recognizer.SetWords(False)
 
             print("===> Begin recording. Press Ctrl+C to stop the recording ")
-            self.rectext.emit("code1234")
+            self.rectext.emit("code1234")  # очистка поля текста
             print(default_speakers)
 
             try:
@@ -150,7 +155,10 @@ class Worker (QObject):
                 print('===> Keyboard Interrupt. Finished Recording')
                 # and save the wav if it's going
                 if isrecordon:
-                    wave_file.close()
+                    try:
+                        wave_file.close()
+                    except Exception as e:
+                        self.rectext.emit(str(e))
 
             except NameError as e:
                 if str(e) == 'vasya1998':
@@ -160,15 +168,22 @@ class Worker (QObject):
                     print('===> Interrupted. Finished Recording')
                     # and save the wav if it's going
                     if isrecordon:
-                        wave_file.close()
+                        try:
+                            wave_file.close()
+                        except Exception as e:
+                            self.rectext.emit(str(e))
 
             except Exception as e:
                 # write text portion of results to a file
                 with open(outfileText, 'w') as output:
                     print(json.dumps(textResults, indent=4, ensure_ascii=False), file=output)
                 print(str(e))
+                # and save the wav if it's going
                 if isrecordon:
-                    wave_file.close()
+                    try:
+                        wave_file.close()
+                    except Exception as e:
+                        self.rectext.emit(str(e))
 
             if isrecordon:
                 wave_file.close()
@@ -278,6 +293,7 @@ class MainWindow(QMainWindow):
     def runLongTask(self, checked):
         self.stapau_button_is_checked = checked
         if self.stapau_button_is_checked:
+            self.OptionsBtn.setEnabled(False)
             self.TheTextField.setPlainText("")  # затрем поле вывода
             self.StaPauBtn.setIcon(QIcon("src/TheStopButton.png"))  # 2 - иконка стоп
             now = datetime.now()
@@ -302,12 +318,12 @@ class MainWindow(QMainWindow):
             )
             # self.thread.finished.connect(print('finishedasd'))
         else:
-            print("wtf")
+            self.OptionsBtn.setEnabled(True)
             self.thread.requestInterruption()
             self.thread.quit()
             # del self.thread
             self.StaPauBtn.setIcon(QIcon("src/TheStartButton.png"))  # 2 - иконка старт
-            self.txtname = ""
+            self.txtname = ""  # имя txt файла
 
     # Функция кнопки
     # def TheStaPauBtn(self):
@@ -324,7 +340,8 @@ class MainWindow(QMainWindow):
         # открывает окно настроек
 
     def saveAs(self):
-        #ставим текущее время если переменную не определили при тычке запуска
+        # ставим текущее время если переменную не определили при тычке запуска
+        # нужно чтобы название текста было временем старта записи, но если запись уже не ведется, то текущее
         if not self.txtname:
             now = datetime.now()
             fileName, _ = QFileDialog.getSaveFileName(self, "Save File", now.strftime("%Y-%d-%m--%H-%M-%S"),
