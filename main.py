@@ -1,4 +1,5 @@
-from PyQt6.QtCore import QSize, QObject, pyqtSignal, pyqtSlot, QThread, Qt, QSettings, QCoreApplication
+from PyQt6.QtCore import QSize, QObject, pyqtSignal, pyqtSlot, QThread, Qt, QSettings, QCoreApplication, QTranslator, \
+    QLocale, QLibraryInfo
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (
     QApplication,
@@ -339,6 +340,13 @@ class MainWindow(QMainWindow):
 
 
 app = QApplication([])
+
+# чтобы кнопки управления были на языке системы
+translator = QTranslator(app)
+locale = QLocale.system().name()
+path = QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)
+translator.load('qt_%s' % locale, path)
+app.installTranslator(translator)
 
 window = MainWindow()
 window.show()

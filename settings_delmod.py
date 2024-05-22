@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QDialog, QDialogButtonBox, QGroupBox, QLabel, QComboBox, QVBoxLayout, QPushButton
+from PyQt6.QtWidgets import QDialog, QDialogButtonBox, QGroupBox, QLabel, QComboBox, QVBoxLayout, QPushButton, QMessageBox
 import os
 import shutil
 
@@ -43,5 +43,19 @@ class DelMod(QDialog):
         self.setLayout(layout)
 
     def TheDelButton(self):
-        foldername = self.thelist[self.combobox.currentIndex()]
-        print(foldername)
+        folderpath = 'models/'+self.thelist[self.combobox.currentIndex()]
+        qm = QMessageBox()
+
+        ret = qm.question(self, '', "Вы уверены что хотите удалить модель?", qm.StandardButton.Yes | qm.StandardButton.No)
+
+        if ret == qm.StandardButton.Yes:
+            try:
+                print("удалил!") #shutil.rmtree(folderpath)  # ааа страшна
+                qm.information(self, '', "Модель успешно удалена")
+            except OSError as e:
+                print("Error: %s - %s." % (e.filename, e.strerror))
+                qm.information(self, '', "Ошибка: %s - %s." % (e.filename, e.strerror))
+            print(folderpath)
+        else:
+            qm.information(self, '', "Операция удаления отменена")
+

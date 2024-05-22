@@ -78,7 +78,6 @@ class SettingsDialog(QDialog):
     def TheDeleteModel(self):
         dlg3 = DelMod()
         dlg3.exec()
-        print("del")
 
     def TheRecordFlag(self, b):
         print("recordflag")
