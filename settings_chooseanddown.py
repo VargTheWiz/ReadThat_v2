@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import QLabel, QPushButton, QDialog, QComboBox, QGroupBox, 
 from PyQt6.QtWidgets import QProgressBar
 import zipfile
 
+
 class Downloader(QThread):
 
     # Signal for the window to establish the maximum value
@@ -132,7 +133,7 @@ class ChAndDo(QDialog):
         elif self.indexmodeltodown == 2:
             theurl = "https://alphacephei.com/vosk/models/vosk-model-small-cn-0.22.zip "
             thefilename = "vosk-model-small-cn-0.22.zip "
-        self.label.setText("Скачиваем файл модели...")
+        self.label1.setText("Скачиваем файл модели...")
         # Disable the button while the file is downloading.
         self.downloadbutton.setEnabled(False)
         self.progressBar.setVisible(True)

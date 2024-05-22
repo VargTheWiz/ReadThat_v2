@@ -1,7 +1,6 @@
-from PyQt6.QtCore import QUrl, QSettings, pyqtSignal, QThread
-from PyQt6.QtGui import QDesktopServices
-from PyQt6.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QRadioButton, QLabel, QGroupBox, QPushButton, \
-    QFileDialog, QProgressBar, QSizePolicy
+from PyQt6.QtCore import QSettings
+from PyQt6.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QRadioButton, QGroupBox, QPushButton, \
+    QFileDialog
 from settings_chooseanddown import ChAndDo
 
 
