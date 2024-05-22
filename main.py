@@ -33,6 +33,11 @@ class Worker (QObject):
         DURATION = 5.0
         CHUNK_SIZE = 512
 
+        def IsIntReq():
+            interrupt = QThread.currentThread().isInterruptionRequested()
+            if interrupt:
+                raise NameError('vasya1998')
+
         now = datetime.now()
         filename = now.strftime("%Y-%d-%m--%H-%M-%S")+'.wav'  # "loopback_record.wav"
 
@@ -121,28 +126,50 @@ class Worker (QObject):
                     """
                     while True:
                         data = q.get()
+                        IsIntReq()
                         if recognizer.AcceptWaveform(data):
+                            IsIntReq()
                             recognizerResult = recognizer.Result()
                             results = results + recognizerResult
                             # convert the recognizerResult string into a dictionary
                             resultDict = json.loads(recognizerResult)
                             if not resultDict.get("text", "") == "":
                                 # print(recognizerResult)
+                                IsIntReq()
                                 textResults.append(resultDict.get("text", ""))
                                 print(resultDict.get("text", ""))
                                 self.rectext.emit(resultDict.get("text", ""))
                             else:
                                 print("no input sound")
+                                IsIntReq()
+
             except KeyboardInterrupt:
                 # write text portion of results to a file
                 with open(outfileText, 'w') as output:
                     print(json.dumps(textResults, indent=4, ensure_ascii=False), file=output)
-                print('===> Finished Recording')
+                print('===> Keyboard Interrupt. Finished Recording')
+                # and save the wav if it's going
+                if isrecordon:
+                    wave_file.close()
+
+            except NameError as e:
+                if str(e) == 'vasya1998':
+                    # write text portion of results to a file
+                    with open(outfileText, 'w') as output:
+                        print(json.dumps(textResults, indent=4, ensure_ascii=False), file=output)
+                    print('===> Interrupted. Finished Recording')
+                    # and save the wav if it's going
+                    if isrecordon:
+                        wave_file.close()
+
             except Exception as e:
                 # write text portion of results to a file
                 with open(outfileText, 'w') as output:
                     print(json.dumps(textResults, indent=4, ensure_ascii=False), file=output)
                 print(str(e))
+                if isrecordon:
+                    wave_file.close()
+
             if isrecordon:
                 wave_file.close()
 
