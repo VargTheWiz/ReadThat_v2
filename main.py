@@ -39,7 +39,7 @@ class Worker (QObject):
                 raise NameError('vasya1998')
 
         now = datetime.now()
-        filename = now.strftime("%Y-%d-%m--%H-%M-%S")+'.wav'  # "loopback_record.wav"
+        filename = now.strftime("%Y-%m-%d--%H-%M-%S")+'.wav'  # "loopback_record.wav"
 
         outfileText = "outms4.json"
         results = ""
@@ -297,7 +297,7 @@ class MainWindow(QMainWindow):
             self.TheTextField.setPlainText("")  # затрем поле вывода
             self.StaPauBtn.setIcon(QIcon("src/TheStopButton.png"))  # 2 - иконка стоп
             now = datetime.now()
-            self.txtname = now.strftime("%Y-%d-%m--%H-%M-%S")
+            self.txtname = now.strftime("%Y-%m-%d--%H-%M-%S")
             # Step 2: Create a QThread object
             self.thread = QThread()
             # Step 3: Create a worker object
@@ -344,7 +344,7 @@ class MainWindow(QMainWindow):
         # нужно чтобы название текста было временем старта записи, но если запись уже не ведется, то текущее
         if not self.txtname:
             now = datetime.now()
-            fileName, _ = QFileDialog.getSaveFileName(self, "Save File", now.strftime("%Y-%d-%m--%H-%M-%S"),
+            fileName, _ = QFileDialog.getSaveFileName(self, "Save File", now.strftime("%Y-%m-%d--%H-%M-%S"),
                                                       "All Files(*);;Text Files(*.txt)")
             print("imintheif")
         else:
