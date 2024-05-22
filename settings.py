@@ -1,7 +1,9 @@
-from PyQt6.QtCore import QSettings
+from PyQt6.QtCore import QSettings, QUrl
+from PyQt6.QtGui import QDesktopServices
 from PyQt6.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QRadioButton, QGroupBox, QPushButton, \
     QFileDialog
 from settings_chooseanddown import ChAndDo
+from settings_delmod import DelMod
 
 
 def LoadSettingsFromIni(value):
@@ -31,7 +33,9 @@ class SettingsDialog(QDialog):
 
         ChooseModel = QPushButton("Выбрать модель")
         ChooseModel.clicked.connect(self.TheChooseModel)
-        CheckUpdates = QPushButton("Загрузить модель")
+        DownModel = QPushButton("Загрузить модель")
+        DownModel.clicked.connect(self.TheDownModel)
+        CheckUpdates = QPushButton("Посмотреть обновления")
         CheckUpdates.clicked.connect(self.TheCheckUpdates)
         DeleteModel = QPushButton("Удалить модель")
         DeleteModel.clicked.connect(self.TheDeleteModel)
@@ -42,6 +46,7 @@ class SettingsDialog(QDialog):
 
         settings_layout = QVBoxLayout()
         settings_layout.addWidget(ChooseModel)
+        settings_layout.addWidget(DownModel)
         settings_layout.addWidget(CheckUpdates)
         settings_layout.addWidget(DeleteModel)
         settings_layout.addWidget(RecordFlag)
@@ -62,13 +67,17 @@ class SettingsDialog(QDialog):
         print(folderpath)
         SaveSettingToIni('chosen-model', folderpath)
 
-    def TheCheckUpdates(self):
-        # url = QUrl("https://alphacephei.com/vosk/models")
-        # QDesktopServices.openUrl(url)
+    def TheDownModel(self):
         dlg2 = ChAndDo()
         dlg2.exec()
 
+    def TheCheckUpdates(self):
+        url = QUrl("https://alphacephei.com/vosk/models")
+        QDesktopServices.openUrl(url)
+
     def TheDeleteModel(self):
+        dlg3 = DelMod()
+        dlg3.exec()
         print("del")
 
     def TheRecordFlag(self, b):

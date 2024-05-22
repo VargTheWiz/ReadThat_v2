@@ -4,6 +4,7 @@ from PyQt6.QtCore import QThread, pyqtSignal
 from PyQt6.QtWidgets import QLabel, QPushButton, QDialog, QComboBox, QGroupBox, QVBoxLayout, QDialogButtonBox
 from PyQt6.QtWidgets import QProgressBar
 import zipfile
+import os
 
 
 class Downloader(QThread):
@@ -55,6 +56,10 @@ class Downloader(QThread):
         # тут код распаковки архива в папку
         with zipfile.ZipFile(filename, "r") as zip_ref:
             zip_ref.extractall("models/")
+
+        # удалим зип после распаковки
+        if os.path.isfile(filename):
+            os.remove(filename)
 
         self.succeeded.emit()
 
@@ -141,7 +146,7 @@ class ChAndDo(QDialog):
         self.downloader = Downloader(theurl, thefilename)
         #    "https://www.python.org/ftp/python/3.7.2/python-3.7.2-webinstall.exe ",
         #    "python-3.7.2-webinstall.exe "
-        #)
+        # )
         # Connect the signals which send information about the download
         # progress with the proper methods of the progress bar.
         self.downloader.setTotalProgress.connect(self.progressBar.setMaximum)
@@ -160,7 +165,6 @@ class ChAndDo(QDialog):
         self.label2.setText("")
         self.label3.setText("")
         self.label4.setText("")
-
 
     def downloadFinished(self):
         # Restore the button.
