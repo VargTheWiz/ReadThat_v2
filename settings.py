@@ -32,11 +32,13 @@ class SettingsDialog(QDialog):
 
         ChooseModel = QPushButton("Выбрать модель")
         ChooseModel.clicked.connect(self.TheChooseModel)
-        CheckUpdates = QPushButton("Посмотреть обновления")
+        CheckUpdates = QPushButton("Загрузить модель")
         CheckUpdates.clicked.connect(self.TheCheckUpdates)
         DeleteModel = QPushButton("Удалить модель")
         DeleteModel.clicked.connect(self.TheDeleteModel)
         RecordFlag = QRadioButton("Записывать аудио во время распознавания")
+        if LoadSettingsFromIni('makerecord') == "True":
+            RecordFlag.setChecked(True)
         RecordFlag.toggled.connect(lambda: self.TheRecordFlag(RecordFlag))
 
         settings_layout = QVBoxLayout()

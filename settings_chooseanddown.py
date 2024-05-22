@@ -3,7 +3,7 @@ from urllib.request import urlopen
 from PyQt6.QtCore import QThread, pyqtSignal
 from PyQt6.QtWidgets import QLabel, QPushButton, QDialog, QComboBox, QGroupBox, QVBoxLayout, QDialogButtonBox
 from PyQt6.QtWidgets import QProgressBar
-
+import zipfile
 
 class Downloader(QThread):
 
@@ -50,6 +50,11 @@ class Downloader(QThread):
                     self.setCurrentProgress.emit(readBytes)
         # If this line is reached then no exception has ocurred in
         # the previous lines.
+
+        # тут код распаковки архива в папку
+        with zipfile.ZipFile(filename, "r") as zip_ref:
+            zip_ref.extractall("models/")
+
         self.succeeded.emit()
 
 
@@ -73,13 +78,16 @@ class ChAndDo(QDialog):
         # English | vosk-model-small-en-us-0.15 | 40Mb https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
         # Indian English | vosk-model-small-en-in-0.4 | 36Mb
         # Chinese | vosk-model-small-cn-0.22 | 42Mb https://alphacephei.com/vosk/models/vosk-model-small-cn-0.22.zip
-        self.combobox.currentIndexChanged.connect(self.index_changed)
+        # self.combobox.currentIndexChanged.connect(self.index_changed)
 
-        self.label = QLabel("Press the button to start downloading.", self)
+        self.label1 = QLabel("Выберете модель и начните загрузку.", self)
+        self.label2 = QLabel("Пожалуйста, обратите внимание на размер:", self)
+        self.label3 = QLabel("Большие модели буду не только долго скачиваться,", self)
+        self.label4 = QLabel("но и очень долго загружаться в память", self)
         # self.label.setGeometry(20, 20, 200, 25)
 
         # Кнопка загрузки
-        self.downloadbutton = QPushButton("Start download", self)
+        self.downloadbutton = QPushButton("Начать загрузку", self)
         # self.button.move(20, 60)
         self.downloadbutton.pressed.connect(self.initDownload)
 
@@ -90,7 +98,10 @@ class ChAndDo(QDialog):
 
         chanddo_layout = QVBoxLayout()
         chanddo_layout.addWidget(self.combobox)
-        chanddo_layout.addWidget(self.label)
+        chanddo_layout.addWidget(self.label1)
+        chanddo_layout.addWidget(self.label2)
+        chanddo_layout.addWidget(self.label3)
+        chanddo_layout.addWidget(self.label4)
         chanddo_layout.addWidget(self.downloadbutton)
         chanddo_layout.addWidget(self.progressBar)
 
@@ -121,7 +132,7 @@ class ChAndDo(QDialog):
         elif self.indexmodeltodown == 2:
             theurl = "https://alphacephei.com/vosk/models/vosk-model-small-cn-0.22.zip "
             thefilename = "vosk-model-small-cn-0.22.zip "
-        self.label.setText("Downloading file...")
+        self.label.setText("Скачиваем файл модели...")
         # Disable the button while the file is downloading.
         self.downloadbutton.setEnabled(False)
         self.progressBar.setVisible(True)
@@ -144,11 +155,11 @@ class ChAndDo(QDialog):
     def downloadSucceeded(self):
         # Set the progress at 100%.
         self.progressBar.setValue(self.progressBar.maximum())
-        self.label.setText("The file has been downloaded!")
-        # распаковать модель в папку моделс
-        # удалить зип
-        # установить ее в конфиге как основную
-        #
+        self.label1.setText("Модель распознавания успешно загружена!")
+        self.label2.setText("")
+        self.label3.setText("")
+        self.label4.setText("")
+
 
     def downloadFinished(self):
         # Restore the button.
