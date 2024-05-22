@@ -88,7 +88,7 @@ class ChAndDo(QDialog):
 
         self.label1 = QLabel("Выберете модель и начните загрузку.", self)
         self.label2 = QLabel("Пожалуйста, обратите внимание на размер:", self)
-        self.label3 = QLabel("Большие модели буду не только долго скачиваться,", self)
+        self.label3 = QLabel("Большие модели будут не только долго скачиваться,", self)
         self.label4 = QLabel("но и очень долго загружаться в память", self)
         # self.label.setGeometry(20, 20, 200, 25)
 

@@ -45,17 +45,18 @@ class DelMod(QDialog):
     def TheDelButton(self):
         folderpath = 'models/'+self.thelist[self.combobox.currentIndex()]
         qm = QMessageBox()
-
-        ret = qm.question(self, '', "Вы уверены что хотите удалить модель?", qm.StandardButton.Yes | qm.StandardButton.No)
-
+        string = 'Вы уверены, что хотите удалить модель? '+folderpath
+        ret = qm.question(self, 'Удаляем? Совсем-совсем?', string, qm.StandardButton.Yes | qm.StandardButton.No)
         if ret == qm.StandardButton.Yes:
             try:
-                print("удалил!") #shutil.rmtree(folderpath)  # ааа страшна
-                qm.information(self, '', "Модель успешно удалена")
+                shutil.rmtree(folderpath)  # ааа страшна
+                self.thelist = os.listdir('models/')
+                self.combobox.clear()
+                self.combobox.addItems(self.thelist)
+                qm.information(self, 'Результат', "Модель успешно удалена")
             except OSError as e:
                 print("Error: %s - %s." % (e.filename, e.strerror))
                 qm.information(self, '', "Ошибка: %s - %s." % (e.filename, e.strerror))
-            print(folderpath)
         else:
-            qm.information(self, '', "Операция удаления отменена")
+            qm.information(self, 'Результат', "Операция удаления отменена")
 
