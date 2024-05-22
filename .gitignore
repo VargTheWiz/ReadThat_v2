@@ -231,6 +231,7 @@ fabric.properties
 
 # Loopback audiofile
 loopback_record.wav
-models/*.*
+models/*
 config.ini
 outms4.json
+
