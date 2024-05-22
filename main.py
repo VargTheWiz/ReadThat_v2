@@ -20,7 +20,7 @@ import queue
 import sys
 import wave
 import os
-from settings import CustomDialog, LoadSettingsFromIni, SaveSettingToIni
+from settings import SettingsDialog, LoadSettingsFromIni, SaveSettingToIni
 
 
 # Step 1: Create a worker class
@@ -32,7 +32,8 @@ class Worker (QObject):
         DURATION = 5.0
         CHUNK_SIZE = 512
 
-        filename = "loopback_record.wav"
+        now = datetime.now()
+        filename = now.strftime("%Y-%d-%m--%H-%M-%S")+'.wav'  # "loopback_record.wav"
 
         outfileText = "outms4.json"
         results = ""
@@ -62,7 +63,12 @@ class Worker (QObject):
                 else:
                     exit()
 
+
             isrecordon = LoadSettingsFromIni('makerecord')
+            if isrecordon == "True":
+                isrecordon = True
+            else:
+                isrecordon = False
             if isrecordon:
                 wave_file = wave.open(filename, 'wb')
                 wave_file.setnchannels(default_speakers["maxInputChannels"])
@@ -87,7 +93,7 @@ class Worker (QObject):
             self.rectext.emit("Пожалуйста, подождите, модель загружается")
             print("===> Build the model and recognizer objects.  This will take a few minutes.")
             # model = Model(r"D:/Programmeas/makesubtitles/vosk-model-ru-0.42")
-            model = Model(r"D:/Programmeas/makesubtitles/vosk-model-small-ru-0.22")
+            model = Model("models/vosk-model-small-ru-0.22")
             if LoadSettingsFromIni('model'):
                 print(LoadSettingsFromIni('model'))
                 model = Model(LoadSettingsFromIni('model'))
@@ -197,6 +203,7 @@ class MainWindow(QMainWindow):
         # self.HideBtn.setMinimum Height(200)
         self.StaPauBtn.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         layout2.addWidget(self.StaPauBtn)
+        self.txtname = ""
 
         # кнопка сохранения текста
         self.SaveTxtBtn = QToolButton()
@@ -245,7 +252,8 @@ class MainWindow(QMainWindow):
         if self.stapau_button_is_checked:
             self.TheTextField.setPlainText("")  # затрем поле вывода
             self.StaPauBtn.setIcon(QIcon("src/TheStopButton.png"))  # 2 - иконка стоп
-
+            now = datetime.now()
+            self.txtname = now.strftime("%Y-%d-%m--%H-%M-%S")
             # Step 2: Create a QThread object
             self.thread = QThread()
             # Step 3: Create a worker object
@@ -271,6 +279,7 @@ class MainWindow(QMainWindow):
             self.thread.quit()
             # del self.thread
             self.StaPauBtn.setIcon(QIcon("src/TheStartButton.png"))  # 2 - иконка старт
+            self.txtname = ""
 
     # Функция кнопки
     # def TheStaPauBtn(self):
@@ -282,14 +291,20 @@ class MainWindow(QMainWindow):
         self.close()
 
     def TheOptions(self):
-        print("setti")
-        dlg = CustomDialog()
+        dlg = SettingsDialog()
         dlg.exec()
         # открывает окно настроек
 
     def saveAs(self):
-        now = datetime.now()
-        fileName, _ = QFileDialog.getSaveFileName(self, "Save File", now.strftime("%Y-%d-%m--%H-%M-%S"), "All Files(*);;Text Files(*.txt)")
+        #ставим текущее время если переменную не определили при тычке запуска
+        if not self.txtname:
+            now = datetime.now()
+            fileName, _ = QFileDialog.getSaveFileName(self, "Save File", now.strftime("%Y-%d-%m--%H-%M-%S"),
+                                                      "All Files(*);;Text Files(*.txt)")
+            print("imintheif")
+        else:
+            fileName, _ = QFileDialog.getSaveFileName(self, "Save File", self.txtname,
+                                                      "All Files(*);;Text Files(*.txt)")
         if fileName:
             with open(fileName, 'w') as f:
                 f.write(self.TheTextField.toPlainText())

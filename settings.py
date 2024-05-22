@@ -1,7 +1,8 @@
-from PyQt6.QtCore import QUrl, QSettings
+from PyQt6.QtCore import QUrl, QSettings, pyqtSignal, QThread
 from PyQt6.QtGui import QDesktopServices
 from PyQt6.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QRadioButton, QLabel, QGroupBox, QPushButton, \
-    QFileDialog
+    QFileDialog, QProgressBar, QSizePolicy
+from settings_chooseanddown import ChAndDo
 
 
 def LoadSettingsFromIni(value):
@@ -16,7 +17,7 @@ def SaveSettingToIni(parameter, what):
     print("srgn")
 
 
-class CustomDialog(QDialog):
+class SettingsDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -36,6 +37,7 @@ class CustomDialog(QDialog):
         DeleteModel = QPushButton("Удалить модель")
         DeleteModel.clicked.connect(self.TheDeleteModel)
         RecordFlag = QRadioButton("Записывать аудио во время распознавания")
+        RecordFlag.toggled.connect(lambda: self.TheRecordFlag(RecordFlag))
 
         settings_layout = QVBoxLayout()
         settings_layout.addWidget(ChooseModel)
@@ -60,11 +62,20 @@ class CustomDialog(QDialog):
         SaveSettingToIni('chosen-model', folderpath)
 
     def TheCheckUpdates(self):
-        url = QUrl("https://alphacephei.com/vosk/models")
-        QDesktopServices.openUrl(url)
-        print("check")
+        # url = QUrl("https://alphacephei.com/vosk/models")
+        # QDesktopServices.openUrl(url)
+        dlg2 = ChAndDo()
+        dlg2.exec()
 
     def TheDeleteModel(self):
         print("del")
+
+    def TheRecordFlag(self, b):
+        print("recordflag")
+        if b.text() == "Записывать аудио во время распознавания":
+            if b.isChecked():
+                SaveSettingToIni('makerecord', 'True')
+            else:
+                SaveSettingToIni('makerecord', 'False')
 
 
