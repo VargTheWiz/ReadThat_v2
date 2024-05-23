@@ -106,8 +106,9 @@ class Worker (QObject):
             # model = Model(r"D:/Programmeas/makesubtitles/vosk-model-ru-0.42")
             model = Model("models/vosk-model-small-ru-0.22")
             if LoadSettingsFromIni('model'):
-                print(LoadSettingsFromIni('model'))
-                model = Model(LoadSettingsFromIni('model'))
+                folpath = 'r"{}"'.format(LoadSettingsFromIni('model'))
+                print(folpath)  # (LoadSettingsFromIni('model'))
+                model = Model(folpath)#(LoadSettingsFromIni('model'))
             recognizer = KaldiRecognizer(model, int(default_speakers["defaultSampleRate"]))
             recognizer.SetWords(False)
 
@@ -351,8 +352,10 @@ class MainWindow(QMainWindow):
             fileName, _ = QFileDialog.getSaveFileName(self, "Save File", self.txtname,
                                                       "All Files(*);;Text Files(*.txt)")
         if fileName:
-            with open(fileName, 'w') as f:
-                f.write(self.TheTextField.toPlainText())
+            with open(fileName, 'w', encoding='utf-8') as f:
+                output = self.TheTextField.toPlainText()
+                output.encode('utf-8')
+                f.write(output)
             # self.fileName = fileName
 
     def TheHideButton(self, checked):
