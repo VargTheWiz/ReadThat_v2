@@ -1,4 +1,5 @@
-from PyQt6.QtCore import QSize, QObject, pyqtSignal, pyqtSlot, QThread, Qt, QSettings, QCoreApplication, QTranslator, \
+from PyQt6.QtCore import QSize, QObject, pyqtSignal, pyqtSlot, QThread, Qt, QSettings, \
+    QCoreApplication, QTranslator, \
     QLocale, QLibraryInfo
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (
