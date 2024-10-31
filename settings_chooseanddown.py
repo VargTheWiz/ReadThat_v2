@@ -171,5 +171,3 @@ class ChAndDo(QDialog):
         self.downloadbutton.setEnabled(True)
         # Delete the thread when no longer needed.
         del self.downloader
-
-

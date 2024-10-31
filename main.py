@@ -1,6 +1,5 @@
 from PyQt6.QtCore import QSize, QObject, pyqtSignal, pyqtSlot, QThread, Qt, QSettings, \
-    QCoreApplication, QTranslator, \
-    QLocale, QLibraryInfo
+    QTranslator, QLocale, QLibraryInfo
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (
     QApplication,
@@ -11,9 +10,8 @@ from PyQt6.QtWidgets import (
     QToolButton,
     QSizePolicy,
     QPlainTextEdit,
-    QFileDialog, QRadioButton, QGroupBox, QDialogButtonBox, QDialog
-)  # QPushButton, QTextEdit,
-# from PyQt6.QtGui import QPalette, QColor
+    QFileDialog,
+)
 from datetime import datetime
 from vosk import Model, KaldiRecognizer
 import pyaudiowpatch as pyaudio
@@ -21,7 +19,7 @@ import json
 import queue
 import sys
 import wave
-import os
+
 from settings import SettingsDialog, LoadSettingsFromIni, SaveSettingToIni
 
 
@@ -106,10 +104,11 @@ class Worker (QObject):
             print("===> Build the model and recognizer objects.  This will take a few minutes.")
             # model = Model(r"D:/Programmeas/makesubtitles/vosk-model-ru-0.42")
             model = Model("models/vosk-model-small-ru-0.22")
-            if LoadSettingsFromIni('model'):
-                folpath = 'r"{}"'.format(LoadSettingsFromIni('model'))
+            if LoadSettingsFromIni('chosen-model'):
+                # folpath = 'r"{}"'.format(LoadSettingsFromIni('chosen-model'))
+                folpath = '{}'.format(LoadSettingsFromIni('chosen-model'))
                 print(folpath)  # (LoadSettingsFromIni('model'))
-                model = Model(folpath)#(LoadSettingsFromIni('model'))
+                model = Model(folpath)  # (LoadSettingsFromIni('model'))
             recognizer = KaldiRecognizer(model, int(default_speakers["defaultSampleRate"]))
             recognizer.SetWords(False)
 
@@ -215,6 +214,17 @@ class MainWindow(QMainWindow):
         # виджет вывода текста
         self.TheTextField = QPlainTextEdit()
         self.TheTextField.setReadOnly(1)
+        """
+        QFont f = document()->defaultFont();
+        mTextPointSize *= mZoomFactor;
+        f.setPointSize(mTextPointSize);
+        document()->setDefaultFont(f);
+        """
+        f = self.TheTextField.document().defaultFont()
+        f.setPointSize(16)
+        self.TheTextField.document().setDefaultFont(f)
+        # self.TheTextField.set
+
         self.TheTextField.setPlainText("Привет! Тут будет показываться распознанный текст из воспроизведенного в "
                                        "системе звука после того как ты нажмешь на кнопку старта!")
         layout.addWidget(self.TheTextField)
@@ -320,12 +330,13 @@ class MainWindow(QMainWindow):
             )
             # self.thread.finished.connect(print('finishedasd'))
         else:
-            self.OptionsBtn.setEnabled(True)
             self.thread.requestInterruption()
+            # self.thread.stop()
             self.thread.quit()
             # del self.thread
             self.StaPauBtn.setIcon(QIcon("src/TheStartButton.png"))  # 2 - иконка старт
             self.txtname = ""  # имя txt файла
+            self.OptionsBtn.setEnabled(True)
 
     # Функция кнопки
     # def TheStaPauBtn(self):

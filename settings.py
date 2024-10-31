@@ -1,7 +1,7 @@
 from PyQt6.QtCore import QSettings, QUrl
 from PyQt6.QtGui import QDesktopServices
 from PyQt6.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QRadioButton, QGroupBox, QPushButton, \
-    QFileDialog
+    QFileDialog, QLabel
 from settings_chooseanddown import ChAndDo
 from settings_delmod import DelMod
 
@@ -33,6 +33,7 @@ class SettingsDialog(QDialog):
 
         ChooseModel = QPushButton("Выбрать модель")
         ChooseModel.clicked.connect(self.TheChooseModel)
+        CurrentChosenModel = QLabel("Текущая модель:\n" + LoadSettingsFromIni('chosen-model'))
         DownModel = QPushButton("Загрузить модель")
         DownModel.clicked.connect(self.TheDownModel)
         CheckUpdates = QPushButton("Посмотреть обновления")
@@ -46,6 +47,7 @@ class SettingsDialog(QDialog):
 
         settings_layout = QVBoxLayout()
         settings_layout.addWidget(ChooseModel)
+        settings_layout.addWidget(CurrentChosenModel)
         settings_layout.addWidget(DownModel)
         settings_layout.addWidget(CheckUpdates)
         settings_layout.addWidget(DeleteModel)

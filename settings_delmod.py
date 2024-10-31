@@ -1,4 +1,5 @@
-from PyQt6.QtWidgets import QDialog, QDialogButtonBox, QGroupBox, QLabel, QComboBox, QVBoxLayout, QPushButton, QMessageBox
+from PyQt6.QtWidgets import QDialog, QDialogButtonBox, QGroupBox, QLabel, QComboBox, QVBoxLayout, QPushButton, \
+    QMessageBox
 import os
 import shutil
 
@@ -59,4 +60,3 @@ class DelMod(QDialog):
                 qm.information(self, '', "Ошибка: %s - %s." % (e.filename, e.strerror))
         else:
             qm.information(self, 'Результат', "Операция удаления отменена")
-
